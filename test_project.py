@@ -15,7 +15,7 @@ class TestSchool(unittest.TestCase):
         school.add_result(Subject.MATH,2021, 32.0)
         self.assertTrue(school.has_results(Subject.MATH))
 
-    def test_calculate_average_no_results(self):
+    def test_has_results_no_results(self):
         school = School("A")
         self.assertFalse(school.has_results(Subject.MATH))
 
