@@ -1,6 +1,6 @@
 import unittest
-from main import convert_to_float, Subject
-from main import School
+from project import convert_to_float, Subject
+from project import School
 
 class TestSchool(unittest.TestCase):
 
