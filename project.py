@@ -35,7 +35,7 @@ class School:
         :type name: str
         """
         self.name = name
-        self.results: dict[str, dict[int, float]] = {
+        self.results: dict[Subject, dict[int, float]] = {
             Subject.POLISH: {},
             Subject.ENGLISH: {},
             Subject.MATH: {}
