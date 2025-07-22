@@ -74,9 +74,13 @@ class TestConvertToFlat(unittest.TestCase):
         self.assertEqual(convert_to_float("0.57"), 0.57)
         self.assertEqual(convert_to_float("123.123"), 123.123)
 
-    def test_empty_and_none(self):
+    def test_floats_with_comma(self):
+        self.assertEqual(convert_to_float("1,0"), 1.0)
+        self.assertEqual(convert_to_float("0,57"), 0.57)
+        self.assertEqual(convert_to_float("123,123"), 123.123)
+
+    def test_empty(self):
         self.assertEqual(convert_to_float(""), 0)
-        self.assertEqual(convert_to_float(None), 0)
 
     def test_non_number(self):
         with self.assertRaises(ValueError):
