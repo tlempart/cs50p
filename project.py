@@ -24,12 +24,12 @@ class School:
 
     Each subject result is stored as a dictionary mapping the year to the average score.
     Provides methods to add results, calculate averages, estimate performance trends,
-    and convert school data into a dictionary format for further use (e.g., reporting or serialization).
+Spli    and convert school data into a dictionary format for further use (e.g., reporting or serialisation).
     """
 
     def __init__(self, name) -> None:
         """
-        Initializes a School instance with an empty result structure for each subject.
+        Initialises a School instance with an empty result structure for each subject.
 
         :param name: The name of the school.
         :type name: str
@@ -243,43 +243,140 @@ def convert_to_float(number_as_string: str) -> float:
     """
     return 0 if not number_as_string else float(number_as_string.replace(",", "."))
 
+def get_subject_order(subject_code: str, order_code: str) -> str:
+    """
+    Combines subject and order codes into a field name used for sorting.
+
+    :param subject_code: Subject code ('P' for Polish, 'E' for English, 'M' for Math, 'A' for All).
+    :type subject_code: str
+    :param order_code: Order code ('A' for average, 'T' for trend).
+    :type order_code: str
+    :return: The resulting field name used for sorting (e.g., "english_trend").
+    :rtype: str
+
+    :raises ValueError: If the provided subject_code or order_code is not supported.
+
+    :example:
+
+    >>> get_subject_order("P", "A")
+    'polish_average'
+
+    >>> get_subject_order("A", "T")
+    'all_trend'
+
+    >>> get_subject_order("G", "A")
+    Traceback (most recent call last):
+        ...
+    ValueError: Invalid subject code: G. Allowed: P, E, M, A
+    """
+    subjects = {"P": "polish", "E": "english", "M": "math", "A": "all"}
+    orders = {"A": "average", "T": "trend"}
+    return subjects[subject_code] + "_" + orders[order_code]
+
+
+def get_sorted_school_rows(schools: list[School], subject_order: str, trend_year: int) -> list[dict[str, float]]:
+    """
+    Converts a list of School objects to dictionaries using `convert_to_dict`, and returns the list
+    sorted in descending order by the specified subject and metric (e.g., 'polish_average').
+
+    :param schools: List of School objects to be converted and sorted.
+    :param subject_order: The key to sort by (e.g., ``"math_average"``, ``"english_trend"``, ``"all_average"``, etc.).
+    :param trend_year: The year used for trend calculation in each school's ``convert_to_dict`` method.
+
+    :return: A list of dictionaries, each containing metrics for a school, sorted in descending order
+             by the specified subject metric.
+
+    :raises KeyError: If the specified ``subject_order`` key is not present in one or more dictionaries.
+
+    Example:
+
+        schools = [
+            School("Alpha"),  # Suppose it has math_average = 75.0
+            School("Beta"),   # math_average = 85.0
+            School("Gamma")   # math_average = 65.0
+        ]
+
+        # After results are added appropriately...
+
+        rows = get_sorted_school_rows(schools, "math_average", 2025)
+
+        # Output:
+        [
+            {
+                "school": "Beta",
+                "polish_average": 70.0,
+                "polish_trend": 68.0,
+                "english_average": 72.0,
+                "english_trend": 70.0,
+                "math_average": 85.0,
+                "math_trend": 83.0,
+                "all_average": 75.7,
+                "all_trend": 73.7
+            },
+            ...
+        ]
+    """
+    school_rows = [school.convert_to_dict(trend_year) for school in schools]
+    school_rows.sort(key=lambda item: item[subject_order], reverse=True)
+    return school_rows
+
+
+def print_school_table(school_rows: list[dict[str, float]]) -> None:
+    """
+    Displays school results as a formatted table in the console.
+
+    :param school_rows: A list of dictionaries, each representing a school's performance data.
+    :type school_rows: list[dict[str, float]]
+
+    :example:
+
+        >>> print_school_table([
+        ...     {"school": "Alpha", "math_average": 75.0, "math_trend": 78.2, "all_average": 76.3, "all_trend": 79.0},
+        ...     {"school": "Beta", "math_average": 70.0, "math_trend": 72.0, "all_average": 71.5, "all_trend": 73.4}
+        ... ])
+        +---------+---------------+-------------+--------------+------------+
+        | school  | math_average  | math_trend  | all_average  | all_trend  |
+        +---------+---------------+-------------+--------------+------------+
+        | Alpha   | 75.0          | 78.2        | 76.3         | 79.0       |
+        | Beta    | 70.0          | 72.0        | 71.5         | 73.4       |
+        +---------+---------------+-------------+--------------+------------+
+    """
+    print(tabulate(school_rows, headers="keys"))
+
 def main():
     """
     Main entry point of the program.
 
-    Prompts the user to input a city name, choose a subject, and choose whether to sort by average or trend.
-    Then loads school data for the given city across multiple years, computes averages and trends,
-    sorts the schools based on the user's selection, and prints the results in a table.
+    Prompts the user to input:
+    - a city name,
+    - a subject ('P', 'E', 'M', 'A'),
+    - a sort order ('A' for average or 'T' for trend).
 
-    The subject options are:
-        - 'P' for Polish
-        - 'E' for English
-        - 'M' for Math
-        - 'A' for All subjects combined
+    Then displays a table of school performance data sorted by the selected subject and metric.
 
-    The order options are:
-        - 'A' to sort by average score
-        - 'T' to sort by trend prediction
+    :raises KeyboardInterrupt: If the user cancels input (e.g. with Ctrl+C).
 
-    The program reads school data from CSV files for the years 2021 to 2024,
-    and uses 2025 as the year for trend prediction.
+    Example (user input shown after colons):
 
-    :raises KeyboardInterrupt: If the user interrupts input (Ctrl+C).
+        - City: Warsaw
+        - Subject (P for Polish, E for English, M for Math, A for all): P
+        - Order (A for average, T for trend): T
+
+        # Output: Sorted table of school data for Warsaw by Polish trend
     """
     city: str = pyip.inputStr("City: ")
-    subject: str = pyip.inputChoice(choices=["P", "E", "M", "A"], prompt='Subject (P for polish, E for english, M for math, A for all): ')
-    order: str = pyip.inputChoice(choices=["A", "T"], prompt="Order (A for average, T for trend): ")
+    subject: str = pyip.inputChoice(
+        choices=["P", "E", "M", "A"],
+        prompt="Subject (P for Polish, E for English, M for Math, A for all): "
+    )
+    order: str = pyip.inputChoice(
+        choices=["A", "T"],
+        prompt="Order (A for average, T for trend): "
+    )
 
-    subjects = { "P": "polish", "E": "english", "M": "math", "A": "all" }
-    orders = { "A": "average", "T": "trend" }
-
-    subject_order = subjects[subject] + "_" + orders[order]
-
-    schools: list[School] = read_schools(["2021", "2022", "2023", "2024"], city)
-    school_rows: list[str: float] = list(school.convert_to_dict(2025) for school in schools)
-
-    school_rows.sort(key=lambda item: item[subject_order], reverse=True)
-    print(tabulate(school_rows, headers="keys"))
+    subject_order = get_subject_order(subject, order)
+    school_rows = get_sorted_school_rows(read_schools(["2021", "2022", "2023", "2024"], city), subject_order, 2025)
+    print_school_table(school_rows)
 
 if __name__ == '__main__':
     main()
