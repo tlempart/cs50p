@@ -4,7 +4,7 @@ This Python project analyzes standardized 8th-grade exam results of schools acro
 
 📍 Data Source:
 The exam results are obtained from the official website of the Central Examination Board of Poland (Centralna Komisja Egzaminacyjna – CKE):
-🔗 https://cke.gov.pl/egzamin-osmoklasisty/wyniki/
+🔗 https://mapa.wyniki.edu.pl/MapaEgzaminow/
 
 ## 🚀 Features
 

@@ -134,7 +134,7 @@ Spli    and convert school data into a dictionary format for further use (e.g., 
 
         >>> school = School("Publiczna SP nr 1 im. Jana Pawła II")
         >>> # ... suppose results have been added here ...
-        >>> school.convert_to_dict(2025)
+        >>> school.convert_to_dict(2026)
         {
             "school": "Publiczna SP nr 1 im. Jana Pawła II",
             "polish_average": 63.4,
@@ -298,7 +298,7 @@ def get_sorted_school_rows(schools: list[School], subject_order: str, trend_year
 
         # After results are added appropriately...
 
-        rows = get_sorted_school_rows(schools, "math_average", 2025)
+        rows = get_sorted_school_rows(schools, "math_average", 2026)
 
         # Output:
         [
@@ -375,7 +375,7 @@ def main():
     )
 
     subject_order = get_subject_order(subject, order)
-    school_rows = get_sorted_school_rows(read_schools(["2021", "2022", "2023", "2024"], city), subject_order, 2025)
+    school_rows = get_sorted_school_rows(read_schools(["2021", "2022", "2023", "2024", "2025"], city), subject_order, 2026)
     print_school_table(school_rows)
 
 if __name__ == '__main__':
