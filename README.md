@@ -90,24 +90,28 @@ Warsaw;School A;75,0;82,0;90,0
 ```
 Note: Decimal numbers use a comma (,) and are internally converted to floats.
 
-### 📈 How Trends Are Calculated
+## 📈 How Trends Are Calculated
 
 The program uses `LinearRegression` from `scikit-learn` to fit a line to past results and predict the performance for the next year (hardcoded as 2025).
 
-### 🧪 Example Function
+## 🧪 Example Function
 
 ```
 def calculate_trend(self, subject: Subject, year: int) -> float:
 # Fits linear regression to past years and predicts result for given year
 ```
 
-### ❓ Why Use This
+## ❓ Why Use This
 
 This tool is useful for:
 - Educators comparing school performances over years
 - Analysts exploring exam result trends
 - Report generation for school administrators
 
-### 📄 License
+## Video
+
+The project is also presented in a form of video at https://youtu.be/jrRTM5k5oHs.
+
+## 📄 License
 
 MIT License (or specify your preferred license)
